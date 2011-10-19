@@ -1,57 +1,72 @@
-#include <stdio.h>
-#include <string.h>
-#include <sys/mman.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
-void func3();
+#include <stdio.h>
+#include "mock.h"
+#include "unittest.h"
 int func2(int arg1, int arg2) {
-	printf("start func2 %d %d\n",arg1,arg2);
+	return 20;
+}
+int  func1(int arg1,int arg2) {
+	return 10;
+}
+int  func3(int arg1,int arg2) {
+	return 30;
+}
+
+
+int  func_call3(int arg1,int arg2) {
+	return 31 + func1(1,2);
+}
+int  func_call4(int arg1,int arg2) {
+	return 32 + func_call3(1,2);
+}
+int  func_call5(int arg1,int arg2) {
+	return 33 + func_call4(1,2);
+}
+
+TEST(mock_one_func) {
+	Assert(func1(1,2) == 10);
+	mock_func(func1,func2);
+	Assert(func1(1,2) == 20);
+	return 0;
+}
+TEST(mock_unmock_func) {
+	Assert(func1(1,2) == 10);
+	mock_func(func1,func2);
+	Assert(func1(1,2) == 20);
+	unmock_func(func1);
+	Assert(func1(1,2) == 10);
+	return 0;
+}
+TEST(mock_remock_func) {
+	Assert(func1(1,2) == 10);
+	mock_func(func1,func2);
+	Assert(func1(1,2) == 20);
+	mock_func(func1,func3);
+	Assert(func1(1,2) == 30);
+	unmock_func(func1);
+	Assert(func1(1,2) == 10);
+	return 0;
+}
+TEST(mock_mock_call_from_func) {
+	Assert(func1(1,2) == 10);
+	Assert(func_call3(1,2) == 41);
+	mock_func(func1,func3);
+	Assert(func1(1,2) == 30);
+	Assert(func_call3(1,2) == 61);
+	unmock_func(func1);
+	Assert(func_call3(1,2) == 41);
 	return 0;
 }
 
-
-void func1(int arg1,int arg2) {
-	printf("start func1 %d %d\n",arg1, arg2);
-	asm("pushq %rax\n\t"
-	     "movq 0x0102030405060708, %rax\n\t"
-	     "pushq %rax\n\t"
-	     "retq\n\t");
-
-	printf("end func1\n");
-}
-void mock(void * srcFunc, void * dstFunc) {
-	char *p;
-	long psize = sysconf(_SC_PAGESIZE);
-	char jumpf[30] = "\x48\xb8XXXXXXXX\x50\xc3";
-	char *addr = jumpf+2;
-	(*(void**) (addr))=dstFunc; 
-	for (p = (char *)srcFunc; (unsigned long)p % psize; --p)
-		;
-		
-	if (-1 == mprotect(p,128, PROT_WRITE|PROT_READ|PROT_EXEC)){
-		perror("could not set protection");
-		exit(-1);
-	}
-	memcpy(srcFunc ,jumpf,5+sizeof(void*));
-
-}
-void func7() {
-	printf("func7 s\n");
-	func1(3,4 ); 
-	printf("func7 e\n");
-}
-int main(void)
-{
-	int foo = 10, bar = 15;
-	__asm__ __volatile__("addl  %%ebx,%%eax"
-			:"=a"(foo)
-			:"a"(foo), "b"(bar)
-			);
-	printf("foo+bar=%d\n", foo);
-	mock(func1, func2);
-	func7();
-	printf("program end\n");
-
+TEST(mock_mock_call_that_is_mocked) {
+	Assert(func_call5(1,2) == 106);
+	mock_func(func1,func3);
+	Assert(func_call5(1,2) == 126);
+	mock_func(func_call4,func_call3);
+	Assert(func_call5(1,2) == 94);
+	mock_func(func1,func2);
+	Assert(func_call5(1,2) == 84);
+	unmock_all();
+	Assert(func_call5(1,2) == 106);
 	return 0;
 }
