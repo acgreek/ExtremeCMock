@@ -1,57 +1,117 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
-void func3();
-int func2(int arg1, int arg2) {
-	printf("start func2 %d %d\n",arg1,arg2);
+#include <stdlib.h>
+#include "linkedlist.h"
+
+static int lg_initialized=0;
+static ListNode_t lg_mocked_functions_list;
+
+static void initialize_mock_api() {
+	ListInitialize(&lg_mocked_functions_list);
+	lg_initialized=1;
+}
+
+#define STUB_SIZE 5+sizeof(void*)
+
+typedef struct _mocked_function_t  {
+	ListNode_t node;
+	void * addr;
+	void * new_addr;
+	char backup_function_data[STUB_SIZE];
+} mocked_function_t;
+
+static int isMatchMockedFunction (ListNode_t* n, void * addr) {
+	mocked_function_t *cur_a = NODE_TO_ENTRY(mocked_function_t,node, n);
+	if (addr == cur_a->addr)
+		return 1;
 	return 0;
 }
 
-
-void func1(int arg1,int arg2) {
-	printf("start func1 %d %d\n",arg1, arg2);
-	asm("pushq %rax\n\t"
-	     "movq 0x0102030405060708, %rax\n\t"
-	     "pushq %rax\n\t"
-	     "retq\n\t");
-
-	printf("end func1\n");
+static mocked_function_t *
+findMockedFunction(void * addr) {
+	ListNode_t * foundp;
+	if (0 ==lg_initialized) {
+		initialize_mock_api();
+	}
+	foundp =ListFind(&lg_mocked_functions_list,isMatchMockedFunction ,addr);
+	if (NULL == foundp)
+		return NULL;
+	return NODE_TO_ENTRY(mocked_function_t,node, foundp);
 }
-void mock(void * srcFunc, void * dstFunc) {
+
+static void unprotect_address(mocked_function_t * functionp) {
 	char *p;
 	long psize = sysconf(_SC_PAGESIZE);
-	char jumpf[30] = "\x48\xb8XXXXXXXX\x50\xc3";
-	char *addr = jumpf+2;
-	(*(void**) (addr))=dstFunc; 
-	for (p = (char *)srcFunc; (unsigned long)p % psize; --p)
+	for (p = (char *)functionp->addr; (unsigned long)p % psize; --p)
 		;
-		
 	if (-1 == mprotect(p,128, PROT_WRITE|PROT_READ|PROT_EXEC)){
 		perror("could not set protection");
 		exit(-1);
 	}
-	memcpy(srcFunc ,jumpf,5+sizeof(void*));
+	memcpy(functionp->backup_function_data,functionp->addr,STUB_SIZE);
+}
+
+static mocked_function_t * new_mocked_function(void * addr) {
+	mocked_function_t * mfp;
+	mfp = malloc (sizeof(mocked_function_t));
+	mfp->addr = addr;
+	mfp->new_addr = NULL;
+	ListAddBegin(&lg_mocked_functions_list, &mfp->node);
+	unprotect_address(mfp);
+	return mfp;
+}
+
+static void hi_jack_function(mocked_function_t *functionp,void * dstFunc) {
+	char jumpf[30] = "\x48\xb8XXXXXXXX\x50\xc3";
+	char *addr = jumpf+2;
+	(*(void**) (addr))=dstFunc; 
+	memcpy(functionp->addr,jumpf,STUB_SIZE);
+}
+static void unhi_jack_function(mocked_function_t *functionp) {
+	memcpy(functionp->addr,functionp->backup_function_data,STUB_SIZE);
+	ListRemove ( &functionp->node);
+	free(functionp);
 
 }
-void func7() {
-	printf("func7 s\n");
-	func1(3,4 ); 
-	printf("func7 e\n");
-}
-int main(void)
-{
-	int foo = 10, bar = 15;
-	__asm__ __volatile__("addl  %%ebx,%%eax"
-			:"=a"(foo)
-			:"a"(foo), "b"(bar)
-			);
-	printf("foo+bar=%d\n", foo);
-	mock(func1, func2);
-	func7();
-	printf("program end\n");
+/**
+ * hi-jacks a function
+ * @param address to hi-jack
+ * @param address to hi-jack with 
+ */
+void mock_func(void * srcFunc, void * dstFunc) {
+	mocked_function_t *functionp;
 
-	return 0;
+	functionp = findMockedFunction(srcFunc);
+	if (NULL == functionp) 
+		functionp = new_mocked_function(srcFunc);
+
+	if (dstFunc == functionp->new_addr) 
+		return ; // already hi_jacked to this address
+
+	hi_jack_function(functionp, dstFunc);
+}
+
+/**
+ * unhi-jacks a function
+ * @param address to un-hi-jack
+ */
+void unmock_func(void * srcFunc) {
+	mocked_function_t *functionp;
+	functionp = findMockedFunction(srcFunc);
+	if (NULL == functionp) 
+		return;
+	unhi_jack_function(functionp);
+}
+
+static void unhi_jack_list_node(ListNode_t *foundp, UNUSED void * foo) {
+	unhi_jack_function( NODE_TO_ENTRY(mocked_function_t,node, foundp));
+}
+/**
+ * unhi-jacks all hi-jacked  functions
+ */
+void unmock_all() {
+	ListApplyAll(&lg_mocked_functions_list,unhi_jack_list_node, NULL);
 }

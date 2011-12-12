@@ -70,3 +70,20 @@ TEST(mock_mock_call_that_is_mocked) {
 	Assert(func_call5(1,2) == 106);
 	return 0;
 }
+
+#include <unistd.h>
+
+int my_read(int fid, char * buffer, int size) {
+	return 90;
+}
+
+//extern int __strcmp_sse2(const char* a, const char* b) ;
+//extern int __strcmp_sse42(const char* a, const char* b) ;
+//extern int __strcmp_sse3(const char* a, const char* b) ;
+TEST(mock_libc) {
+	char buf[10];
+	mock_func(read,my_read);
+	AssertEqInt(read(-1,buf, 9), 90);
+	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
+	return 0;
+}
