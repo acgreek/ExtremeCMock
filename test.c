@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "mock.h"
-#include "unittest.h"
+#include <ExtremeCUnit.h>
 int func2(int arg1, int arg2) {
 	return 20;
 }

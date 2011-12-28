@@ -4,7 +4,7 @@ LDLAGS=`pkg-config ExtremeCUnit --libs`
 
 mock.o: mock.c
 
-test: mock.o libunittest.so test.c unittest.h
+test: mock.o libunittest.so test.c
 	$(CC) $(CFLAGS) -DUNIT_TEST -o $@ test.c mock.o libunittest.so -ldl
 	
 .PHONY: run
