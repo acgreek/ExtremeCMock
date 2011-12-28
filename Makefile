@@ -1,6 +1,6 @@
 
-CFLAGS=-ggdb -O0  -ldl -fPIC -pie -rdynamic -fdevirtualize
-LDLAGS=-ldl
+CFLAGS=-ggdb -O0  `pkg-config ExtremeCUnit --cflags` -fdevirtualize
+LDLAGS=`pkg-config ExtremeCUnit --libs`
 
 mock.o: mock.c
 
