@@ -50,5 +50,13 @@ $(SHARE_LIBRARY_TARGET): $(OBJS)
 run: $(DISTDIR)/test
 	./$(DISTDIR)/test
 
+install: $(SHARE_LIBRARY_TARGET)
+	mkdir -p $(INSTALL_PREFIX)/lib
+	mkdir -p $(INSTALL_PREFIX)/include	
+	mkdir -p $(INSTALL_PREFIX)/lib/pkgconfig
+	cp $(SHARE_LIBRARY_TARGET) $(INSTALL_PREFIX)/lib
+	cp $(HEADER_FILE) $(INSTALL_PREFIX)/include
+	cp $(PKGCONFIG_FILE) $(INSTALL_PREFIX)/lib/pkgconfig
+
 clean:
 	rm -rf $(DEPDIR) $(OBJDIR) $(DISTDIR) $(SHARE_LIBRARY_TARGET32)

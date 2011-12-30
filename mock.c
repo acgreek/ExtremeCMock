@@ -65,10 +65,23 @@ static mocked_function_t * new_mocked_function(void * addr) {
 }
 
 static void hi_jack_function(mocked_function_t *functionp,void * dstFunc) {
+#ifdef __amd64__
 	char jumpf[30] = "\x48\xb8XXXXXXXX\x50\xc3";
 	char *addr = jumpf+2;
 	(*(void**) (addr))=dstFunc; 
 	memcpy(functionp->addr,jumpf,STUB_SIZE);
+#elif __i386__
+#define HIJACK_ADDR(x) *(void**)((x)+1)
+	static const char hijack_stub[] = {
+	0x68, 0x00, 0x00, 0x00, 0x00, /* push addr */
+	0xc3                          /* ret */
+	};
+	memcpy(functionp->addr, hijack_stub, sizeof(hijack_stub));
+	HIJACK_ADDR(functionp->addr) = dstFunc;
+
+#else 
+	abort();
+#endif
 }
 static void unhi_jack_function(mocked_function_t *functionp) {
 	memcpy(functionp->addr,functionp->backup_function_data,STUB_SIZE);
