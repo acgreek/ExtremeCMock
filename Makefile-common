@@ -1,6 +1,9 @@
 CC=gcc
-CFLAGS=-ggdb -O0  `pkg-config ExtremeCUnit --cflags` -fdevirtualize
+CFLAGS=$(CFLAGS_DIST) -ggdb -O0  `pkg-config ExtremeCUnit --cflags` -fdevirtualize
 LDFLAGS=`pkg-config ExtremeCUnit --libs`
+
+OBJDIR=obj$(DIR_SUFFIX)
+DISTDIR=dist$(DIR_SUFFIX)
 
 SRC=mock.c
 OBJ_FILE_NAMES=$(SRC:.c=.o)
@@ -10,13 +13,42 @@ DEPDIR = .dep
 INSTALL_PREFIX = /usr
 UNIT_TEST_SRC= test.c
 
-SHARE_LIBRARY_TARGET = libExtremeCMock.so
+SHARE_LIBRARY_TARGET = $(DISTDIR)/libExtremeCMock.so
 HEADER_FILE = ExtremeCMock.h
 PKGCONFIG_FILE = ExtremeCMock.pc
 
+OBJDIR=obj$(DIR_SUFFIX)
+DISTDIR=dist$(DIR_SUFFIX)
+
 INCLUDES=$(patsubst %,$(DEPDIR)/%,$(INC_FILE_NAMES))
+
+OBJS=$(patsubst %,$(OBJDIR)/%,$(OBJ_FILE_NAMES))
+
 all: run
 -include $(INCLUDES)
 
-clean-common:
-	rm -rf $(SHARE_LIBRARY_TARGET) $(DEPDIR)
+$(OBJDIR)/%.o : %.c
+	mkdir -p $(OBJDIR); \
+	mkdir -p $(DISTDIR); \
+	mkdir -p $(DEPDIR); \
+	$(MAKEDEPEND); \
+	sed -e 's/\(^[^:\.o \t]\)/$(OBJDIR)\/\1/' < $*.d > $(DEPDIR)/$*.P; \
+	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/' -e  's/\(^[^:.o \t]*\.o: .*\)/$(OBJDIR)\/\1/' < $*.d >> $(DEPDIR)/$*.P; \
+	$(COMPILE.c) $(CFLAGS) -o $@ $<; \
+	rm -f $*.d;
+
+$(DISTDIR)/test: $(UNIT_TEST_SRC) $(SHARE_LIBRARY_TARGET)
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-rpath=./$(DISTDIR)/  -DUNIT_TEST -o $@ $< $(SHARE_LIBRARY_TARGET)
+
+
+$(SHARE_LIBRARY_TARGET): $(OBJS)
+	mkdir -p $(DISTDIR); 
+	$(CC) $(CFLAGS) -o $@ -shared $(OBJS) 
+
+.PHONY: run clean
+
+run: $(DISTDIR)/test
+	./$(DISTDIR)/test
+
+clean:
+	rm -rf $(DEPDIR) $(OBJDIR) $(DISTDIR) $(SHARE_LIBRARY_TARGET32)

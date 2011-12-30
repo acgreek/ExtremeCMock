@@ -1,6 +1,4 @@
 .dep/
-obj32/
-obj64/
-dist32/
-dist64/
+obj*/
+dist*/
 
