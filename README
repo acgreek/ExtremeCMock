@@ -1,0 +1,7 @@
+to build execute`make -f Makefile32` for ia32 build or `make -f Makefile64` for ia64 build
+
+on ubuntu you may need to install for ia32 build on 64 bit platform:
+
+ sudo apt-get install ia32-libs
+ sudo apt-get install libc6-dev-i386
+

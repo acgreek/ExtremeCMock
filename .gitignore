@@ -1,5 +1,6 @@
 .dep/
-libExtremeCMock.so
-obj/
-test
+obj32/
+obj64/
+dist32/
+dist64/
 

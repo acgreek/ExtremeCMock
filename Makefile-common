@@ -1,0 +1,22 @@
+CC=gcc
+CFLAGS=-ggdb -O0  `pkg-config ExtremeCUnit --cflags` -fdevirtualize
+LDFLAGS=`pkg-config ExtremeCUnit --libs`
+
+SRC=mock.c
+OBJ_FILE_NAMES=$(SRC:.c=.o)
+MAKEDEPEND = gcc -M $(CFLAGS) -o $*.d $<
+DEPDIR = .dep
+
+INSTALL_PREFIX = /usr
+UNIT_TEST_SRC= test.c
+
+SHARE_LIBRARY_TARGET = libExtremeCMock.so
+HEADER_FILE = ExtremeCMock.h
+PKGCONFIG_FILE = ExtremeCMock.pc
+
+INCLUDES=$(patsubst %,$(DEPDIR)/%,$(INC_FILE_NAMES))
+all: run
+-include $(INCLUDES)
+
+clean-common:
+	rm -rf $(SHARE_LIBRARY_TARGET) $(DEPDIR)
