@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+major_version=1
+version=1.0.0
+
+Name: ExtremeCUnit
+Description: ExtremeCUnit unit C/C++ unit test 
+Version: ${version}
+Requires: 
+Libs: -lExtremeCUnit -ldl
+Cflags: -fPIC -pie -rdynamic

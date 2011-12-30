@@ -13,6 +13,8 @@ INSTALL_PREFIX = /usr
 UNIT_TEST_SRC= test.c
 
 SHARE_LIBRARY_TARGET = libExtremeCMock.so
+HEADER_FILE = ExtremeCMock.h
+PKGCONFIG_FILE = ExtremeCMock.pc
 
 INCLUDES=$(patsubst %,$(DEPDIR)/%,$(INC_FILE_NAMES))
 
@@ -32,10 +34,18 @@ $(SHARE_LIBRARY_TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ -shared $(OBJS) 
 
 test: $(UNIT_TEST_SRC) $(SHARE_LIBRARY_TARGET)
-	$(CC) $(CFLAGS) $(LDFLAGS) -DUNIT_TEST -o $@ $< $(SHARE_LIBRARY_TARGET)
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-rpath=`pwd`  -DUNIT_TEST -o $@ $< $(SHARE_LIBRARY_TARGET)
+
+install: $(SHARE_LIBRARY_TARGET)
+	mkdir -p $(INSTALL_PREFIX)/lib
+	mkdir -p $(INSTALL_PREFIX)/include	
+	mkdir -p $(INSTALL_PREFIX)/lib/pkgconfig
+	cp $(SHARE_LIBRARY_TARGET) $(INSTALL_PREFIX)/lib
+	cp $(HEADER_FILE) $(INSTALL_PREFIX)/include
+	cp $(PKGCONFIG_FILE) $(INSTALL_PREFIX)/lib/pkgconfig
 	
 .PHONY: run clean
 run: test
-	export LD_LIBRARY_PATH=.;./test
+	./test
 clean:
 	rm -rf $(SHARE_LIBRARY_TARGET) $(OBJDIR) $(DEPDIR)
