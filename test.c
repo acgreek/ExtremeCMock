@@ -27,6 +27,7 @@ TEST(mock_one_func) {
 	Assert(func1(1,2) == 10);
 	mock_func(func1,func2);
 	Assert(func1(1,2) == 20);
+	unmock_func(func1);
 	return 0;
 }
 TEST(mock_unmock_func) {
