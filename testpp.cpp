@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #define UNIT_TEST
-#include <ExtremeCUnit.h>
 #include "ExtremeCMock.h"
+#include <ExtremeCUnit.h>
 int func2(int arg1, int arg2) {
 	return 20;
 }
@@ -26,47 +26,47 @@ int  func_call5(int arg1,int arg2) {
 
 TEST(mock_one_func) {
 	Assert(func1(1,2) == 10);
-	mock_func(func1,func2);
+	mock_func((void*)func1,(void*)func2);
 	Assert(func1(1,2) == 20);
-	unmock_func(func1);
+	unmock_func((void*)func1);
 	return 0;
 }
 TEST(mock_unmock_func) {
 	Assert(func1(1,2) == 10);
-	mock_func(func1,func2);
+	mock_func((void*)func1,(void*)func2);
 	Assert(func1(1,2) == 20);
-	unmock_func(func1);
+	unmock_func((void*)func1);
 	Assert(func1(1,2) == 10);
 	return 0;
 }
 TEST(mock_remock_func) {
 	Assert(func1(1,2) == 10);
-	mock_func(func1,func2);
+	mock_func((void*)func1,(void*)func2);
 	Assert(func1(1,2) == 20);
-	mock_func(func1,func3);
+	mock_func((void*)func1,(void*)func3);
 	Assert(func1(1,2) == 30);
-	unmock_func(func1);
+	unmock_func((void*)func1);
 	Assert(func1(1,2) == 10);
 	return 0;
 }
 TEST(mock_mock_call_from_func) {
 	Assert(func1(1,2) == 10);
 	Assert(func_call3(1,2) == 41);
-	mock_func(func1,func3);
+	mock_func((void*)func1,(void*)func3);
 	Assert(func1(1,2) == 30);
 	Assert(func_call3(1,2) == 61);
-	unmock_func(func1);
+	unmock_func((void*)func1);
 	Assert(func_call3(1,2) == 41);
 	return 0;
 }
 
 TEST(mock_mock_call_that_is_mocked) {
 	Assert(func_call5(1,2) == 106);
-	mock_func(func1,func3);
+	mock_func((void*)func1,(void*)func3);
 	Assert(func_call5(1,2) == 126);
-	mock_func(func_call4,func_call3);
+	mock_func((void*)func_call4,(void*)func_call3);
 	Assert(func_call5(1,2) == 94);
-	mock_func(func1,func2);
+	mock_func((void*)func1,(void*)func2);
 	Assert(func_call5(1,2) == 84);
 	unmock_all();
 	Assert(func_call5(1,2) == 106);
@@ -84,7 +84,7 @@ int my_read(int fid, char * buffer, int size) {
 //extern int __strcmp_sse3(const char* a, const char* b) ;
 TEST(mock_libc) {
 	char buf[10];
-	mock_func(read,my_read);
+	mock_func((void*)read,(void*)my_read);
 	AssertEqInt(read(-1,buf, 9), 90);
 	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
 	return 0;

@@ -11,7 +11,9 @@ MAKEDEPEND = gcc -M $(CFLAGS) -o $*.d $<
 DEPDIR = .dep
 
 INSTALL_PREFIX = /usr
-UNIT_TEST_SRC= test.c
+UNIT_TEST_SRC= test.c testpp.cc
+UNIT_TEST_FILE_NAMES_OBJ_1=$(UNIT_TEST_SRC:.c=.o)
+UNIT_TEST_FILE_NAMES_OBJ=$(UNIT_TEST_FILE_NAMES_OBJ_1:.cc=.o)
 
 SHARE_LIBRARY_TARGET = $(DISTDIR)/libExtremeCMock.so
 HEADER_FILE = ExtremeCMock.h
@@ -23,11 +25,12 @@ DISTDIR=dist$(DIR_SUFFIX)
 INCLUDES=$(patsubst %,$(DEPDIR)/%,$(INC_FILE_NAMES))
 
 OBJS=$(patsubst %,$(OBJDIR)/%,$(OBJ_FILE_NAMES))
+UNIT_TEST_OBJS=$(patsubst %,$(OBJDIR)/%,$(UNIT_TEST_FILE_NAMES_OBJ))
 
 all: run
 -include $(INCLUDES)
 
-$(OBJDIR)/%.o : %.c
+$(OBJDIR)/test.o : test.c
 	mkdir -p $(OBJDIR); \
 	mkdir -p $(DISTDIR); \
 	mkdir -p $(DEPDIR); \
@@ -37,7 +40,17 @@ $(OBJDIR)/%.o : %.c
 	$(COMPILE.c) $(CFLAGS) -o $@ $<; \
 	rm -f $*.d;
 
-$(DISTDIR)/test: $(UNIT_TEST_SRC) $(SHARE_LIBRARY_TARGET)
+$(OBJDIR)/testpp.o : testpp.cpp
+	mkdir -p $(OBJDIR); \
+	mkdir -p $(DISTDIR); \
+	mkdir -p $(DEPDIR); \
+	$(MAKEDEPEND); \
+	sed -e 's/\(^[^:\.o \t]\)/$(OBJDIR)\/\1/' < $*.d > $(DEPDIR)/$*.P; \
+	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/' -e  's/\(^[^:.o \t]*\.o: .*\)/$(OBJDIR)\/\1/' < $*.d >> $(DEPDIR)/$*.P; \
+	$(COMPILE.c) $(CFLAGS) -o $@ $<; \
+	rm -f $*.d;
+
+$(DISTDIR)/test: $(UNIT_TEST_OBJS) $(SHARE_LIBRARY_TARGET)
 	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-rpath=./$(DISTDIR)/  -DUNIT_TEST -o $@ $< $(SHARE_LIBRARY_TARGET)
 
 
