@@ -84,7 +84,7 @@ int my_read(int fid, char * buffer, int size) {
 //extern int __strcmp_sse3(const char* a, const char* b) ;
 TEST(mock_libc) {
 	char buf[10];
-	mock_func((void*)read,(void*)my_read);
+	MOCK_FUNC(read,my_read);
 	AssertEqInt(read(-1,buf, 9), 90);
 	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
 	return 0;
