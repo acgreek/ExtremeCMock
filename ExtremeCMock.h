@@ -4,9 +4,11 @@
 #ifdef __cplusplus
 extern "C"  {
 #endif
+
 void mock_func(void * srcFunc, void * dstFunc);
 void unmock_func(void * srcFunc);
 void unmock_all();
+
 #ifdef __cplusplus
 }
 #endif
