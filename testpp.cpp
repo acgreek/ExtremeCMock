@@ -24,14 +24,14 @@ int  func_call5(int arg1,int arg2) {
 	return 33 + func_call4(1,2);
 }
 
-TEST(mock_one_func) {
+TEST(mock_one_func_cpp) {
 	Assert(func1(1,2) == 10);
 	mock_func((void*)func1,(void*)func2);
 	Assert(func1(1,2) == 20);
 	unmock_func((void*)func1);
 	return 0;
 }
-TEST(mock_unmock_func) {
+TEST(mock_unmock_func_cpp) {
 	Assert(func1(1,2) == 10);
 	mock_func((void*)func1,(void*)func2);
 	Assert(func1(1,2) == 20);
@@ -39,7 +39,7 @@ TEST(mock_unmock_func) {
 	Assert(func1(1,2) == 10);
 	return 0;
 }
-TEST(mock_remock_func) {
+TEST(mock_remock_func_cpp) {
 	Assert(func1(1,2) == 10);
 	mock_func((void*)func1,(void*)func2);
 	Assert(func1(1,2) == 20);
@@ -49,7 +49,7 @@ TEST(mock_remock_func) {
 	Assert(func1(1,2) == 10);
 	return 0;
 }
-TEST(mock_mock_call_from_func) {
+TEST(mock_mock_call_from_func_cpp) {
 	Assert(func1(1,2) == 10);
 	Assert(func_call3(1,2) == 41);
 	mock_func((void*)func1,(void*)func3);
@@ -60,7 +60,7 @@ TEST(mock_mock_call_from_func) {
 	return 0;
 }
 
-TEST(mock_mock_call_that_is_mocked) {
+TEST(mock_mock_call_that_is_mocked_cpp) {
 	Assert(func_call5(1,2) == 106);
 	mock_func((void*)func1,(void*)func3);
 	Assert(func_call5(1,2) == 126);
@@ -82,7 +82,7 @@ int my_read(int fid, char * buffer, int size) {
 //extern int __strcmp_sse2(const char* a, const char* b) ;
 //extern int __strcmp_sse42(const char* a, const char* b) ;
 //extern int __strcmp_sse3(const char* a, const char* b) ;
-TEST(mock_libc) {
+TEST(mock_libc_cpp) {
 	char buf[10];
 	MOCK_FUNC(read,my_read);
 	AssertEqInt(read(-1,buf, 9), 90);
