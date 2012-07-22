@@ -89,3 +89,23 @@ TEST(mock_libc_cpp) {
 	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
 	return 0;
 }
+
+class Foo_class {
+	public:
+	int method() {
+		return 20;
+	}
+};
+
+int method_bb(Foo_class * objp) {
+	return 30;
+}
+
+TEST(mock_class_member) {
+	Foo_class a;
+	AssertEqInt(a.method(), 20);
+	MOCK_FUNC(&Foo_class::method,method_bb);
+	AssertEqInt(a.method(), 30);
+	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
+	return 0;
+}

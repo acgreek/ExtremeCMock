@@ -68,7 +68,7 @@ static void hi_jack_function(mocked_function_t *functionp,void * dstFunc) {
 #ifdef __amd64__
 	char jumpf[30] = "\x48\xb8XXXXXXXX\x50\xc3";
 	char *addr = jumpf+2;
-	(*(void**) (addr))=dstFunc; 
+	(*(void**) (addr))=dstFunc;
 	memcpy(functionp->addr,jumpf,STUB_SIZE);
 #elif __i386__
 #define HIJACK_ADDR(x) *(void**)((x)+1)
@@ -79,7 +79,7 @@ static void hi_jack_function(mocked_function_t *functionp,void * dstFunc) {
 	memcpy(functionp->addr, hijack_stub, sizeof(hijack_stub));
 	HIJACK_ADDR(functionp->addr) = dstFunc;
 
-#else 
+#else
 	abort();
 #endif
 }
@@ -92,16 +92,16 @@ static void unhi_jack_function(mocked_function_t *functionp) {
 /**
  * hi-jacks a function
  * @param address to hi-jack
- * @param address to hi-jack with 
+ * @param address to hi-jack with
  */
 void mock_func(void * srcFunc, void * dstFunc) {
 	mocked_function_t *functionp;
 
 	functionp = findMockedFunction(srcFunc);
-	if (NULL == functionp) 
+	if (NULL == functionp)
 		functionp = new_mocked_function(srcFunc);
 
-	if (dstFunc == functionp->new_addr) 
+	if (dstFunc == functionp->new_addr)
 		return ; // already hi_jacked to this address
 
 	hi_jack_function(functionp, dstFunc);
@@ -114,7 +114,7 @@ void mock_func(void * srcFunc, void * dstFunc) {
 void unmock_func(void * srcFunc) {
 	mocked_function_t *functionp;
 	functionp = findMockedFunction(srcFunc);
-	if (NULL == functionp) 
+	if (NULL == functionp)
 		return;
 	unhi_jack_function(functionp);
 }

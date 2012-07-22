@@ -1,10 +1,21 @@
 to install execute `make; sudo make install`
 
 
-to build execute `make -f Makefile32` for ia32 build or `make -f Makefile64` for ia64 build
+to build execute `sudo make -f Makefile32 install ` for ia32 build or `sudo make -f Makefile64 install` for ia64 build
+
+to build the system default, you can just execute 'sudo make install'
+
 
 on ubuntu you may need to install for ia32 build on 64 bit platform:
 
  sudo apt-get install ia32-libs
  sudo apt-get install libc6-dev-i386
+
+
+for examples of how to use to mock a function see test.c 
+to use this add to your compile commandline `pkg-config ExtremeCUnit --cflags` and to the link command line `pkg-config ExtremeCUnit --libs`
+
+to build and run the test app, you need to install my ExtremeCUnit testing framework https://github.com/acgreek/ExtremeCUnit, then in this directory, execute 'make run', if you see no errors all tests passed. To version status of each test execute dist/test -v
+
+
 
