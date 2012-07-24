@@ -18,4 +18,37 @@ to use this add to your compile commandline `pkg-config ExtremeCUnit --cflags` a
 to build and run the test app, you need to install my ExtremeCUnit testing framework https://github.com/acgreek/ExtremeCUnit, then in this directory, execute 'make run', if you see no errors all tests passed. To version status of each test execute dist/test -v
 
 
+EXAMPLE 
+Say you have some library that function you want to test and it call the libc function 'time_t time(time_t * t)'. That is going to return current time which is not necessarily going to be consistent in your test. So here is is an example of how to mock the time function. It works even when some library you are linking with calls the time function
+
+source for mock_time.c :
+..
+#include <time.h>
+#include <stdio.h>
+#include <ExtremeCMock.h>
+long time_mock()
+{
+	static int now = 10;
+	return now++;
+}
+
+int main (int argc, char *argv) {
+	printf("time is now %lu\n", time(NULL));
+	mock_func(time,time_mock);
+	printf("time is now %lu\n", time(NULL));
+	printf("time is now %lu\n", time(NULL));
+	unmock_all();
+	printf("time is now %lu\n", time(NULL));
+	return 0;
+}  
+..
+
+compile and run : 
+ac@agcarat-laptop:~/my-src/ExtremeCMock$ gcc -o mock_time mock_time.c `pkg-config --cflags --libs ExtremeCMock` 
+ac@agcarat-laptop:~/my-src/ExtremeCMock$ ./mock_time 
+time is now 1343102848
+time is now 10
+time is now 11
+time is now 1343102848
+
 
