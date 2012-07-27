@@ -62,6 +62,7 @@ $(OBJDIR)/testpp.o : testpp.cpp
 	rm -f $*.d;
 
 $(DISTDIR)/test: $(UNIT_TEST_OBJS) $(SHARE_LIBRARY_TARGET) obj/testpp.o
+	echo 1
 	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-rpath=./$(DISTDIR)/  -DUNIT_TEST -o $@ $< $(SHARE_LIBRARY_TARGET) obj/testpp.o
 
 
@@ -73,6 +74,11 @@ $(SHARE_LIBRARY_TARGET): $(OBJS)
 
 run: $(DISTDIR)/test
 	./$(DISTDIR)/test
+
+test: $(DISTDIR)/test
+	./$(DISTDIR)/test
+
+
 
 install: $(SHARE_LIBRARY_TARGET)
 	mkdir -p $(INSTALL_PREFIX)/lib

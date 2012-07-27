@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#define UNIT_TEST
 #include <ExtremeCUnit.h>
 #include "ExtremeCMock.h"
 int func2(int arg1, int arg2) {
@@ -78,12 +77,12 @@ long time_mock()
 	return now++;
 }
 TEST(mock_time) {
-	printf("time is now %lu\n", time(NULL));
+	printf("time is now %lu\n",(unsigned long ) time(NULL));
 	mock_func(time,time_mock);
-	printf("time is now %lu\n", time(NULL));
-	printf("time is now %lu\n", time(NULL));
+	printf("time is now %lu\n", (unsigned long )time(NULL));
+	printf("time is now %lu\n",(unsigned long ) time(NULL));
 	unmock_all();
-	printf("time is now %lu\n", time(NULL));
+	printf("time is now %lu\n",(unsigned long ) time(NULL));
 	return 0;
 }
 
