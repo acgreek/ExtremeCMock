@@ -44,8 +44,8 @@ int main (int argc, char *argv) {
 ..
 
 compile and run : 
-ac@agcarat-laptop:~/my-src/ExtremeCMock$ gcc -o mock_time mock_time.c `pkg-config --cflags --libs ExtremeCMock` 
-ac@agcarat-laptop:~/my-src/ExtremeCMock$ ./mock_time 
+username@hostname:~/my-src/ExtremeCMock$ gcc -o mock_time mock_time.c `pkg-config --cflags --libs ExtremeCMock` 
+username@hostname:~/my-src/ExtremeCMock$ ./mock_time 
 time is now 1343102848
 time is now 10
 time is now 11

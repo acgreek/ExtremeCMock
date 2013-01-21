@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=$(CFLAGS_DIST) -ggdb -O0  `pkg-config ExtremeCUnit --cflags` -fdevirtualize
+# CFLAGS=$(CFLAGS_DIST) -ggdb -O0  `pkg-config ExtremeCUnit --cflags` -fdevirtualize
+CFLAGS=$(CFLAGS_DIST) -ggdb -O0  `pkg-config ExtremeCUnit --cflags` 
 LDFLAGS=`pkg-config ExtremeCUnit --libs`
 
 OBJDIR=obj$(DIR_SUFFIX)

@@ -109,3 +109,9 @@ TEST(mock_class_member) {
 	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
 	return 0;
 }
+
+#ifdef __CYGWIN__ 
+int main (int argc, char * argv[]){
+	return windows_main(argc, argv);
+}
+#endif
