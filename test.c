@@ -1,25 +1,30 @@
 #include <stdlib.h>
 #include <stdio.h>
+#define UNIT_TEST
 #include <ExtremeCUnit.h>
 #include "ExtremeCMock.h"
-int func2(int arg1, int arg2) {
+#include <time.h>
+
+#define UNUSED __attribute__((unused))
+
+int func2(UNUSED int arg1,UNUSED  int arg2) {
 	return 20;
 }
-int  func1(int arg1,int arg2) {
+int  func1(UNUSED int arg1,UNUSED int arg2) {
 	return 10;
 }
-int  func3(int arg1,int arg2) {
+int  func3(UNUSED int arg1,UNUSED int arg2) {
 	return 30;
 }
 
 
-int  func_call3(int arg1,int arg2) {
+int  func_call3(UNUSED int arg1,UNUSED int arg2) {
 	return 31 + func1(1,2);
 }
-int  func_call4(int arg1,int arg2) {
+int  func_call4(UNUSED int arg1,UNUSED int arg2) {
 	return 32 + func_call3(1,2);
 }
-int  func_call5(int arg1,int arg2) {
+int  func_call5(UNUSED int arg1,UNUSED int arg2) {
 	return 33 + func_call4(1,2);
 }
 
