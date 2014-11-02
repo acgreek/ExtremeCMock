@@ -1,4 +1,5 @@
 CC=gcc
+CPP=g++
 # CFLAGS=$(CFLAGS_DIST) -ggdb -O0  `pkg-config ExtremeCUnit --cflags` -fdevirtualize
 CFLAGS=$(CFLAGS_DIST) -ggdb -O0  `pkg-config ExtremeCUnit --cflags` 
 LDFLAGS=`pkg-config ExtremeCUnit --libs`
@@ -64,7 +65,7 @@ $(OBJDIR)/testpp.o : testpp.cpp
 
 $(DISTDIR)/test: $(UNIT_TEST_OBJS) $(SHARE_LIBRARY_TARGET) obj/testpp.o
 	echo 1
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-rpath=./$(DISTDIR)/  -DUNIT_TEST -o $@ $< $(SHARE_LIBRARY_TARGET) obj/testpp.o
+	$(CPP) $(CFLAGS) $(LDFLAGS) -Wl,-rpath=./$(DISTDIR)/  -DUNIT_TEST -o $@ $< $(SHARE_LIBRARY_TARGET) obj/testpp.o
 
 
 $(SHARE_LIBRARY_TARGET): $(OBJS)
