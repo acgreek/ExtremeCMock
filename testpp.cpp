@@ -3,24 +3,25 @@
 #define UNIT_TEST
 #include "ExtremeCMock.h"
 #include <ExtremeCUnit.h>
-int func2(int arg1, int arg2) {
+#define UNUSED __attribute__((unused))
+int func2(UNUSED int arg1,UNUSED  int arg2) {
 	return 20;
 }
-int  func1(int arg1,int arg2) {
+int  func1(UNUSED int arg1,UNUSED int arg2) {
 	return 10;
 }
-int  func3(int arg1,int arg2) {
+int  func3(UNUSED int arg1,UNUSED int arg2) {
 	return 30;
 }
 
 
-int  func_call3(int arg1,int arg2) {
+int  func_call3(UNUSED int arg1,UNUSED int arg2) {
 	return 31 + func1(1,2);
 }
-int  func_call4(int arg1,int arg2) {
+int  func_call4(UNUSED int arg1,UNUSED int arg2) {
 	return 32 + func_call3(1,2);
 }
-int  func_call5(int arg1,int arg2) {
+int  func_call5(UNUSED int arg1,UNUSED int arg2) {
 	return 33 + func_call4(1,2);
 }
 
@@ -75,7 +76,7 @@ TEST(mock_mock_call_that_is_mocked_cpp) {
 
 #include <unistd.h>
 
-int my_read(int fid, char * buffer, int size) {
+int my_read(UNUSED int fid,UNUSED  char * buffer,UNUSED int size) {
 	return 90;
 }
 
@@ -97,7 +98,7 @@ class Foo_class {
 	}
 };
 
-int method_bb(Foo_class * objp) {
+int method_bb(UNUSED Foo_class * objp) {
 	return 30;
 }
 

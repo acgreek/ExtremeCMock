@@ -93,7 +93,7 @@ TEST(mock_time) {
 
 #include <unistd.h>
 
-int my_read(int fid, char * buffer, int size) {
+int my_read(UNUSED int fid, UNUSED char * buffer, UNUSED int size) {
 	return 90;
 }
 

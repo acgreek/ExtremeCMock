@@ -7,8 +7,8 @@ set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9.2)
 
 find_package(PkgConfig)
-set(CMAKE_C_FLAGS "-Wall -Wextra -ggdb3 -fPIC" )
-set(CMAKE_CXX_FLAGS "-std=c++0x -fPIC" )
+#set(CMAKE_C_FLAGS "-Wall -Wextra -ggdb3 -fPIC" )
+#set(CMAKE_CXX_FLAGS "-std=c++0x -fPIC" )
 add_library(ExtremeCMock SHARED mock.c)
 target_link_libraries(ExtremeCMock dl)
 find_package(PkgConfig)
@@ -17,11 +17,14 @@ pkg_check_modules (EXTREMECUNIT ExtremeCUnit)
 string(REPLACE ";" " " EXTREMECUNIT_LDFLAGS2 "${EXTREMECUNIT_LDFLAGS}" )
 string(REPLACE ";" " " EXTREMECUNIT_CFLAGS2 "${EXTREMECUNIT_CFLAGS}" )
 message(STATUS "CFLAGS=" ${EXTREMECUNIT_CFLAGS2})
+message(STATUS "LDFLAGS=" ${EXTREMECUNIT_LDFLAGS2})
 
 ## Compiler flags
 if(CMAKE_COMPILER_IS_GNUCXX)
-	set(CMAKE_CXX_FLAGS "-ggdb ${EXTREMECUNIT_CFLAGS2}")
-	set(CMAKE_CXX_FLAGS "-ggdb ${EXTREMECUNIT_CFLAGS2}")
+	set(CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3 -fPIC ${EXTREMECUNIT_CFLAGS2}")
+	set(CMAKE_CXX_LINK_FLAGS " -fPIC ${EXTREMECUNIT_LDFLAGS2}")
+	set(CMAKE_C_FLAGS "-Wall -Wextra -ggdb3 -fPIC ${EXTREMECUNIT_CFLAGS2}")
+	set(CMAKE_C_LDFLAGS " -fPIC ${EXTREMECUNIT_LDFLAGS2}")
 endif()
 
 
@@ -35,8 +38,8 @@ IF(CYGWIN)
 	set(CMAKE_EXE_LINKER_FLAGS "-pie -ldl -lstdc++")
 ELSE()
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC " )
-	set(CMAKE_EXE_LINKER_FLAGS "-pie -rdynamic -ldl -lstdc++")
-	set (PC_LIBRARY_FLAGS "-pie -Wl,--rpath,.,--rpath,dist -lExtremeCMock -ldl" )
+	set(CMAKE_EXE_LINKER_FLAGS "-fPIC -pie -rdynamic -ldl -lstdc++")
+	set (PC_LIBRARY_FLAGS "-fPIC -pie -Wl,--rpath,.,--rpath,dist -lExtremeCMock -ldl" )
 	set (PC_C_FLAGS "-DUNIT_TEST -fPIC -pie -rdynamic -lExtremeCMock" )
 ENDIF(CYGWIN)
 
@@ -46,9 +49,11 @@ configure_file (
    "${PROJECT_BINARY_DIR}/ExtremeCMock.pc"
 )
 
-set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_C_COMPILER>  <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>")
+set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_CXX_COMPILER>  <FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES> <CMAKE_CXX_LINK_FLAGS> ")
 
-add_executable(test test.c testpp.cpp ) 
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER>  <FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES> <CMAKE_C_LINK_FLAGS> ")
+
+add_executable(test test.c testpp.cpp) 
 
 target_link_libraries(test ExtremeCMock dl stdc++)
 set_target_properties(test PROPERTIES CMAKE_C_LINK_FLAGS "${CMAKE_C_FLAGS} -DUNIT_TEST")
