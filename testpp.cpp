@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#define UNIT_TEST
 #include "ExtremeCMock.h"
 #include <ExtremeCUnit.h>
 #define UNUSED __attribute__((unused))

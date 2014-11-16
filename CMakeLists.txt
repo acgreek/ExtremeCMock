@@ -16,7 +16,7 @@ pkg_check_modules (EXTREMECUNIT ExtremeCUnit)
 
 string(REPLACE ";" " " EXTREMECUNIT_LDFLAGS2 "${EXTREMECUNIT_LDFLAGS}" )
 string(REPLACE ";" " " EXTREMECUNIT_CFLAGS2 "${EXTREMECUNIT_CFLAGS}" )
-message(STATUS "CFLAGS=" ${EXTREMECUNIT_CFLAGS2})
+message(STATUS "CFLAGS=" -Wpmf-conversions ${EXTREMECUNIT_CFLAGS2})
 message(STATUS "LDFLAGS=" ${EXTREMECUNIT_LDFLAGS2})
 
 ## Compiler flags
@@ -39,7 +39,7 @@ IF(CYGWIN)
 ELSE()
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC " )
 	set(CMAKE_EXE_LINKER_FLAGS "-fPIC -pie -rdynamic -ldl -lstdc++")
-	set (PC_LIBRARY_FLAGS "-fPIC -pie -Wl,--rpath,.,--rpath,dist -lExtremeCMock -ldl" )
+	set (PC_LIBRARY_FLAGS " -Wpmf-conversions -fPIC -pie -Wl,--rpath,.,--rpath,dist -lExtremeCMock -ldl" )
 	set (PC_C_FLAGS "-DUNIT_TEST -fPIC -pie -rdynamic -lExtremeCMock" )
 ENDIF(CYGWIN)
 

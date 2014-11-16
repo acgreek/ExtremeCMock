@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#define UNIT_TEST
 #include <ExtremeCUnit.h>
 #include "ExtremeCMock.h"
 #include <time.h>

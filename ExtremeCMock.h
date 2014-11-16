@@ -13,7 +13,11 @@ void unmock_all();
 }
 #endif
 
+#ifdef __cplusplus
+#define MOCK_FUNC(srcFunc, dstFunc) mock_func(reinterpret_cast<void*>(srcFunc),reinterpret_cast<void*>(dstFunc))
+#else 
 #define MOCK_FUNC(srcFunc, dstFunc) mock_func((void*) srcFunc,(void*) dstFunc)
+#endif
 #define UNMOCK_FUNC(srcFunc, dstFunc) unmock_func((void*) srcFunc)
 #define UNMOCK_ALL() unmock_all()
 
