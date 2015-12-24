@@ -55,9 +55,9 @@ set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER>  <FLAGS> <LINK_FLAGS> <OBJECTS> 
 
 add_executable(test test.c testpp.cpp) 
 
-target_link_libraries(test ExtremeCMock dl stdc++)
 set_target_properties(test PROPERTIES CMAKE_C_LINK_FLAGS "${CMAKE_C_FLAGS} -DUNIT_TEST")
 set_target_properties(test PROPERTIES CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_FLAGS}  -DUNIT_TEST")
+target_link_libraries(test ExtremeCMock dl stdc++)
 
 add_custom_target(run ./test)
 add_custom_target(runv ./test -v)

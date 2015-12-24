@@ -1,3 +1,6 @@
+c/c++ mock framework. Overwrites the the function in execution blocks of memory 
+
+
 to install execute `make; sudo make install`
 
 
