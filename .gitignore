@@ -2,3 +2,10 @@
 obj*/
 dist*/
 
+CMakeCache.txt
+CMakeFiles
+ExtremeCMock.pc
+Makefile
+cmake_install.cmake
+extremecmock_test
+libExtremeCMock.so
