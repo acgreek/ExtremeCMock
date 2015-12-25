@@ -86,7 +86,7 @@ TEST(mock_libc_cpp) {
 	char buf[10];
 	MOCK_FUNC(read,my_read);
 	AssertEqInt(read(-1,buf, 9), 90);
-	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
+	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this
 	return 0;
 }
 
@@ -104,13 +104,13 @@ int method_bb(UNUSED Foo_class * objp) {
 TEST(mock_class_member) {
 	Foo_class a;
 	AssertEqInt(a.method(), 20);
-	MOCK_FUNC(&Foo_class::method,method_bb);
+	MOCK_FUNC(reinterpret_cast<void *>(&Foo_class::method),method_bb);
 	AssertEqInt(a.method(), 30);
-	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this 
+	unmock_all();// make sure you do this, read maybe I should make the unit test frame work call this
 	return 0;
 }
 
-#ifdef __CYGWIN__ 
+#ifdef __CYGWIN__
 int main (int argc, char * argv[]){
 	return windows_main(argc, argv);
 }
