@@ -1,3 +1,0 @@
-CFLAGS_DIST=-m64
-DIR_SUFFIX=64
--include Makefile-common
