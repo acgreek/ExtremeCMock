@@ -1,4 +1,6 @@
-c/c++ mock framework. Overwrites the the function in execution blocks of memory 
+c/c++ mock framework. Overwrites the the function in execution blocks of memory. This only works on x86 because it the implementation injects
+machine code into the execution memory. Additionally, gcc is works best. Clang does not allow class/struct member method to be cast to a 
+nonmember function
 
 Instalation requires cmake 
 

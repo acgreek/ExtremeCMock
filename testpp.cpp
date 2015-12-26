@@ -102,6 +102,7 @@ int method_bb(UNUSED Foo_class * objp) {
 }
 
 #ifndef __clang__
+// clang++ does not allow member functions to be cast to nonmember functions
 TEST(mock_class_member) {
 	Foo_class a;
 	AssertEqInt(a.method(), 20);
