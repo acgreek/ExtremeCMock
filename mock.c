@@ -31,7 +31,7 @@ static int isMatchMockedFunction (ListNode_t* n, void * addr) {
 }
 
 static mocked_function_t *
-findMockedFunction(void * addr) {
+findMockedFunction(void * addr()) {
 	ListNode_t * foundp;
 	if (0 ==lg_initialized) {
 		initialize_mock_api();
@@ -54,7 +54,7 @@ static void unprotect_address(mocked_function_t * functionp) {
 	memcpy(functionp->backup_function_data,functionp->addr,STUB_SIZE);
 }
 
-static mocked_function_t * new_mocked_function(void * addr) {
+static mocked_function_t * new_mocked_function(void * addr()) {
 	mocked_function_t * mfp;
 	mfp = malloc (sizeof(mocked_function_t));
 	mfp->addr = addr;
@@ -94,7 +94,7 @@ static void unhi_jack_function(mocked_function_t *functionp) {
  * @param address to hi-jack
  * @param address to hi-jack with
  */
-void mock_func(void * srcFunc, void * dstFunc) {
+void mock_func(void * srcFunc(), void * dstFunc()) {
 	mocked_function_t *functionp;
 
 	functionp = findMockedFunction(srcFunc);
@@ -111,7 +111,7 @@ void mock_func(void * srcFunc, void * dstFunc) {
  * unhi-jacks a function
  * @param address to un-hi-jack
  */
-void unmock_func(void * srcFunc) {
+void unmock_func(void * srcFunc()) {
 	mocked_function_t *functionp;
 	functionp = findMockedFunction(srcFunc);
 	if (NULL == functionp)

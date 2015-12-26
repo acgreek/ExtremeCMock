@@ -6,6 +6,10 @@ cmake_policy(SET CMP0003 NEW)
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9.2)
 
+
+#set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+#set(CMAKE_C_COMPILER "/usr/bin/clang")
+
 find_package(PkgConfig)
 
 add_library(ExtremeCMock SHARED mock.c)
@@ -23,7 +27,7 @@ if (PKG_CONFIG_FOUND)
 
 		## Compiler flags
 		if(CMAKE_COMPILER_IS_GNUCXX)
-			set(CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3 -fPIC ${EXTREMECUNIT_CFLAGS2}")
+            set(CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3 -fPIC -Wno-pmf-conversions ${EXTREMECUNIT_CFLAGS2}")
 			set(CMAKE_CXX_LINK_FLAGS " -fPIC ${EXTREMECUNIT_LDFLAGS2}")
 			set(CMAKE_C_FLAGS "-Wall -Wextra -ggdb3 -fPIC ${EXTREMECUNIT_CFLAGS2}")
 			set(CMAKE_C_LDFLAGS " -fPIC ${EXTREMECUNIT_LDFLAGS2}")
