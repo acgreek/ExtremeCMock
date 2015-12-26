@@ -75,23 +75,7 @@ TEST(mock_mock_call_that_is_mocked) {
 	Assert(func_call5(1,2) == 106);
 	return 0;
 }
-long time_mock()
-{
-	static int now = 10;
-	return now++;
-}
-TEST(mock_time) {
-	printf("time is now %lu\n",(unsigned long ) time(NULL));
-	MOCK_FUNC( time,time_mock);
-	printf("time is now %lu\n", (unsigned long )time(NULL));
-	printf("time is now %lu\n",(unsigned long ) time(NULL));
-	unmock_all();
-	printf("time is now %lu\n",(unsigned long ) time(NULL));
-	return 0;
-}
-
 #include <unistd.h>
-
 int my_read(UNUSED int fid, UNUSED char * buffer, UNUSED int size) {
 	return 90;
 }

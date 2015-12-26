@@ -49,8 +49,6 @@ if (PKG_CONFIG_FOUND)
 			set (PC_C_FLAGS "-DUNIT_TEST -fPIC -pie -rdynamic -lExtremeCMock" )
 		ENDIF(CYGWIN)
 
-
-
 		set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_CXX_COMPILER>  <FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES> <CMAKE_CXX_LINK_FLAGS> ")
 		set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER>  <FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES> <CMAKE_C_LINK_FLAGS> ")
 		add_executable(extremecmock_test test.c testpp.cpp) 
@@ -68,6 +66,10 @@ if (PKG_CONFIG_FOUND)
 else (PKG_CONFIG_FOUND)
 	message("pkg_config not found/installed. Unittests will not be built")
 endif (PKG_CONFIG_FOUND)
+
+add_executable(time_mock time_mock.c)
+target_link_libraries(time_mock ExtremeCMock)
+
 configure_file (
 	"${PROJECT_SOURCE_DIR}/ExtremeCMock.pc.in"
    "${PROJECT_BINARY_DIR}/ExtremeCMock.pc"
