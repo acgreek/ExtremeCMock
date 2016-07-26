@@ -23,6 +23,53 @@ int  func_call4(UNUSED int arg1,UNUSED int arg2) {
 int  func_call5(UNUSED int arg1,UNUSED int arg2) {
 	return 33 + func_call4(1,2);
 }
+void func_ref(int & x) {
+    x= x+1;
+}
+void func_ref1(int & x) {
+    x= x+3;
+}
+TEST(mock_reference_Va) {
+    int x=0;
+    func_ref(x);
+	Assert(x == 1);
+    MOCK_FUNC(func_ref,func_ref1);
+    func_ref(x);
+	Assert(x == 4);
+    UNMOCK_FUNC(func_ref);
+	return 0;
+}
+void lots_of_args(int & x,char * goo, short &y, long &g, int a, int b) {
+    x = a+b;
+    goo[0] = 'F';
+    y=10;
+    g=9;
+}
+void lots_of_args2(int & x,char * goo, short &y, long &g, int a, int b) {
+    x = a-b;
+    goo[0] = 'X';
+    y=3;
+    g=5;
+}
+TEST(mock_reference_lots_of_args) {
+    int x=0;
+    char ar[10] = "house";
+    short y=0;
+    long g=0;
+    lots_of_args(x,ar,y,g,2,3);
+	Assert(x == 5);
+	Assert(ar[0] == 'F');
+	Assert(y == 10);
+	Assert(g == 9);
+    MOCK_FUNC( lots_of_args, lots_of_args2);
+    lots_of_args(x,ar,y,g,2,3);
+	Assert(x == -1);
+	Assert(ar[0] == 'X');
+	Assert(y == 3);
+	Assert(g == 5);
+    UNMOCK_FUNC(lots_of_args);
+	return 0;
+}
 
 TEST(mock_one_func_cpp) {
 	Assert(func1(1,2) == 10);
