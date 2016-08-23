@@ -1,12 +1,11 @@
-c/c++ mock framework. Overwrites the the function in execution blocks of memory. This only works on x86 because it the implementation injects
-machine code into the execution memory. Additionally, gcc is works best. Clang does not allow class/struct member method to be cast to a 
-nonmember function
+c/c++ mock framework. Overwrites the the function in execution blocks of memory. This only works on x86 because the implementation injects
+machine code into the execution memory. Additionally, only works with gcc (as far as I know). It kind of works with Clang, except Clang does not allow class/struct member method to be cast to a 
+nonmember function so you can't mock c++ class/struct member function
 
-Instalation requires cmake 
+Installation requires cmake 
 
 cmake .
 make install
-
 
 
 to clear all mocks, call unmock_all();
