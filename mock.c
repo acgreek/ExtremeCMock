@@ -41,6 +41,12 @@ findMockedFunction(void * addr()) {
 		return NULL;
 	return NODE_TO_ENTRY(mocked_function_t,node, foundp);
 }
+static void my_memcpy(void *dst,void *src,size_t size) {
+    size_t i;
+    for (i=0; i < size ; i ++)
+        ((char *)dst)[i] = ((char *)src)[i];
+
+}
 
 static void unprotect_address(mocked_function_t * functionp) {
 	char *p;
@@ -51,7 +57,11 @@ static void unprotect_address(mocked_function_t * functionp) {
 		perror("could not set protection");
 		exit(-1);
 	}
-	memcpy(functionp->backup_function_data,functionp->addr,STUB_SIZE);
+	if (-1 == mprotect(p+psize,128, PROT_WRITE|PROT_READ|PROT_EXEC)){
+		perror("could not set protection on next page");
+		exit(-1);
+	}
+	my_memcpy(functionp->backup_function_data,functionp->addr,STUB_SIZE);
 }
 
 static mocked_function_t * new_mocked_function(void * addr()) {
@@ -69,14 +79,14 @@ static void hi_jack_function(mocked_function_t *functionp,void * dstFunc) {
 	char jumpf[30] = "\x48\xb8XXXXXXXX\x50\xc3";
 	char *addr = jumpf+2;
 	(*(void**) (addr))=dstFunc;
-	memcpy(functionp->addr,jumpf,STUB_SIZE);
+	my_memcpy(functionp->addr,jumpf,STUB_SIZE);
 #elif __i386__
 #define HIJACK_ADDR(x) *(void**)((x)+1)
 	static const char hijack_stub[] = {
 	0x68, 0x00, 0x00, 0x00, 0x00, /* push addr */
 	0xc3                          /* ret */
 	};
-	memcpy(functionp->addr, hijack_stub, sizeof(hijack_stub));
+	my_memcpy(functionp->addr, hijack_stub, sizeof(hijack_stub));
 	HIJACK_ADDR(functionp->addr) = dstFunc;
 
 #else
@@ -84,7 +94,7 @@ static void hi_jack_function(mocked_function_t *functionp,void * dstFunc) {
 #endif
 }
 static void unhi_jack_function(mocked_function_t *functionp) {
-	memcpy(functionp->addr,functionp->backup_function_data,STUB_SIZE);
+	my_memcpy(functionp->addr,functionp->backup_function_data,STUB_SIZE);
 	ListRemove ( &functionp->node);
 	free(functionp);
 
